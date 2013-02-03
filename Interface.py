@@ -83,7 +83,7 @@ class App:
         if(success):
             self.root.update()
             time.sleep(2)
-            self.root.quit()
+            self.root.destroy()
         else:
             self.chives.entry.delete(0, END)
 
