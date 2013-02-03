@@ -41,12 +41,19 @@ class Chives:
 
     def parseCommand(self):
         entry = self.entry.get()
+        if entry == 'Reload Scripts':
+            self.reloadScripts()
         for command in self.commandMap:
             match = re.search(command, entry)
             if match:
                 self.speech.set("Yes, sir.")
                 self.commandMap[command](match.group)
-        return True
+                return True
+        return False
+
+    def reloadScripts(self):
+        self.commandMap = {}
+        self.loadScripts()
 
 class App:
     def __init__(self):    

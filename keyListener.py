@@ -16,12 +16,12 @@ HOTKEYS = {
   1 : (win32con.VK_F3, win32con.MOD_WIN)
 }
 
-def handle_control_j ():
+def handle_win_f3 ():
   app = App()
   app.start()
 
 HOTKEY_ACTIONS = {
-  1 : handle_control_j
+  1 : handle_win_f3
 }
 
 #
