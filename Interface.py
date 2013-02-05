@@ -1,69 +1,30 @@
-import os
-import glob
-import sys
 import time
-import re
 from Tkinter import *
 from win32api import GetSystemMetrics
 
 SCREEN_WIDTH = GetSystemMetrics(0)
 SCREEN_HEIGHT = GetSystemMetrics(1)
 
-class Chives:
-    def __init__(self, master):
-        self.entry = Entry(master, width=30)
-        self.entry.grid(row=0)
-        self.entry.focus_set()
-
-        self.speech = StringVar()
-        self.speechLabel = Label(master, textvariable=self.speech)
-        self.speechLabel.grid(row=1)
-        self.speech.set("How may I help you, sir?")
-
-        self.commandMap = {}
-        self.loadScripts()
-
-    def loadScripts(self):
-        # Gets all the files with the .py extension from the script folder
-        scripts = [os.path.basename(f)[:-3] for f in glob.glob(os.path.dirname(__file__)+"/scripts/*.py")]
-        for script in scripts:
-            # Because of the above, we have to ignore the case of __init__
-            if script != '__init__':
-                mod = __import__('scripts.' + script, fromlist=['ScriptHandler'])
-                handlerClass = getattr(mod, 'ScriptHandler')
-                handler = handlerClass()
-                self.addToCommandMap(handler)
-                
-    def addToCommandMap(self, handler):
-        commands = handler.commands
-        for command in commands:
-            self.commandMap[command] = handler.runScript
-
-    def parseCommand(self):
-        entry = self.entry.get()
-        if entry == 'Reload Scripts':
-            self.reloadScripts()
-        for command in self.commandMap:
-            match = re.search(command, entry)
-            if match:
-                self.speech.set("Yes, sir.")
-                self.commandMap[command](match.group)
-                return True
-        return False
-
-    def reloadScripts(self):
-        self.commandMap = {}
-        self.loadScripts()
-
 class App:
-    def __init__(self):    
-        self.root = Tk()
+    def __init__(self, message):
+        self.message = message    
+        self.createWindow()
 
-        self.chives = Chives(self.root)
-        self.root.bind("<Return>", self.handle_return)
+    def createWindow(self):
+        self.root = Tk()
 
         self.setHeightAndPosition()
         self.root.title("Chives")
+
+        self.entry = Entry(self.root, width=30)
+        self.entry.grid(row=0)
+        self.entry.bind("<Return>", self.handle_return)
+        self.entry.focus_set()
+
+        self.speech = StringVar()
+        self.speechLabel = Label(self.root, textvariable=self.speech)
+        self.speechLabel.grid(row=1)
+        self.speech.set(self.message)
 
     def setHeightAndPosition(self):
         x = SCREEN_WIDTH - 220
@@ -79,14 +40,14 @@ class App:
         self.root.mainloop()
 
     def handle_return(self, event):
-        success = self.chives.parseCommand()
-        if(success):
-            self.root.update()
-            time.sleep(2)
-            self.root.destroy()
-        else:
-            self.chives.entry.delete(0, END)
+        self.userInput = self.entry.get()
+        self.ackAndClose()
 
-if __name__ == "__main__":
-    app = App()
-    app.start()
+    def ackAndClose(self):
+        self.speech.set("Yes, sir.")
+        self.root.update()
+        self.root.destroy()
+
+    def informOfBadCommand(self):
+        self.speech.set("I don't know that, sir.")
+        self.root.update()
