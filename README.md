@@ -17,3 +17,8 @@ Installation
 In order to run the listener in the background, I suggest using 'pythonw' to suppress the output of the keyListener, 
 while allowing you to close the shell that started the program. Specifically, execute 'pythonw keyListener.py', 
 assuming python is on your system PATH. 
+
+License
+=======
+
+This code falls under the MIT license, as appears in the file "license.txt"
