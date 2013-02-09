@@ -6,7 +6,7 @@ SCREEN_WIDTH = GetSystemMetrics(0)
 SCREEN_HEIGHT = GetSystemMetrics(1)
 
 class App:
-    def __init__(self, message):
+    def __init__(self, message='How can I help you, sir?'):
         self.message = message    
         self.createWindow()
 

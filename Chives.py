@@ -5,9 +5,11 @@ import sys
 import time
 from KeyListener import *
 from Interface import *
+from ChivesMemory import *
 
 class Chives:
     def __init__(self):
+        self.loadMemory()
         self.commandMap = {}
         self.loadScripts()
         self.hotkeyListener = HotKeyListener()
@@ -15,17 +17,23 @@ class Chives:
         self.hotkeyListener.finalizeCallbackRegistrations()
         self.running = True
 
+    def loadMemory(self):
+        if os.path.exists('memory.json'):
+            memFile = open('memory.json', 'r')
+            decorder = ChivesMemoryEncoderDecoder()
+            self.memory = json.loads(memFile, object_hook=)
+
     def commandLoop(self):
         while self.running:
             self.hotkeyListener.checkForHotKey()
 
-    def getUserInput(self):
-        self.app = App()
+    def getUserInput(self, message="How can I help you, sir?"):
+        self.app = App(message)
         self.app.start()
         userInput = self.app.userInput
         success = self.parseCommand(userInput)
         if not success:
-            self.getUserInput()
+            self.getUserInput("I don't know that, sir")
 
     def loadScripts(self):
         # Gets all the files with the .py extension from the script folder
